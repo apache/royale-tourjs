@@ -1,0 +1,58 @@
+{"type": "group",
+ "title": "root",
+ "children": [
+    {"type": "group",
+     "title": "Everything",
+     "description": "This is all we have",
+     "children": [
+        {"type":"group",
+         "title": "Visual Components",
+         "description": "Something about visual components",
+         "children": [
+                 {"type":"group",
+                  "title": "General Components",
+                  "description": "Something about general components",
+                  "children": [
+                 	 {"type":"component",
+                 	  "title": "Alert",
+                 	  "description": "Describe the Alert control",
+                 	  "example": [
+                 	  		{"name": "simple.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/code/simple.mxml", 
+                 	  		 "module_swf":"x/y/z", 
+                 	  		 "module_js":"x/y/z"}
+                 	  	]},
+                 	 {"type":"component",
+                 	  "title":"Button",
+                 	  "description": "Describe the Button control",
+                 	  "example": [
+                 	  		{"name": "plain.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/code/simple.mxml", 
+                 	  		 "module_swf":"x/y/z", 
+                 	  		 "module_js":"x/y/z"},
+                 	  		{"name": "toggle.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/button/code/toggle.mxml", 
+                 	  		 "module_swf":"x/y/z", 
+                 	  		 "module_js":"x/y/z"},
+                 	  		{"name": "radio.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/button/code/radio.mxml", 
+                 	  		 "module_swf":"x/y/z", 
+                 	  		 "module_js":"x/y/z"}
+                 	  	]},
+                 	 {"type":"component",
+                 	  "title":"Other",
+                 	  "description":"Describes something else",
+                 	  "example": [
+                 	  		{"name": "plain.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/code/simple.mxml", 
+                 	  		 "module_swf":"x/y/z", 
+                 	  		 "module_js":"x/y/z"},
+                 	  		{"name": "toggle.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/code/simple.mxml", 
+                 	  		 "module_swf":"x/y/z", 
+                 	  		 "module_js":"x/y/z"}
+                 	  	]}
+                  ]}
+          ]}
+    ]}
+]}
