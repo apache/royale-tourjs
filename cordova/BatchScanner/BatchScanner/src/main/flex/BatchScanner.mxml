@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cordova:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:js="library://ns.apache.org/flexjs/basic" 
+				xmlns:cordova="library://ns.apache.org/flexjs/cordova" 
+				xmlns:local="*"
+				pageTitle="BatchScanner"
+				applicationComplete="init()">
+			   
+	<fx:Declarations>
+	</fx:Declarations>
+    <fx:Style>
+		@namespace basic "library://ns.apache.org/flexjs/basic";
+		basic|PermanentStorage
+		{
+			IStorageProvider: ClassReference("org.apache.flex.storage.providers.AndroidExternalStorageProvider");
+		}
+
+        @media -flex-flash 
+		{
+		
+		basic|PermanentStorage
+		{
+			IStorageProvider: ClassReference("org.apache.flex.storage.providers.AirStorageProvider");
+		}
+
+        }
+    </fx:Style>	
+	<fx:Script>
+		<![CDATA[
+		    import cordova.plugins.barcodeScanner;
+			import cordova.plugins.barcodeScanner.Result;
+		    import navigator.notification;
+			
+		    private var f:FileIO;
+		
+		    private function init():void
+			{
+					notification.beep(8);
+				f = new FileIO();
+				f.label = status;
+				f.addEventListener("ready", readyHandler);
+				f.openFiles();
+			}
+			
+			private function readyHandler(event:Event):void
+			{
+				status.text = "ready";
+			}
+			
+			private function gotCode():void
+			{
+				if (!f.inInventory(code.text))
+				{
+					nf.visible = true;
+					inf.visible = true;
+					okb.visible = true;
+					notification.beep(4);
+				}
+				else
+				{
+					description.text = f.szProductName;
+					f.updateInventoryFile(code.text, quantity.text);
+					code.text = "";
+					notification.beep(1);
+				}
+			}
+						
+			private function getCode():void
+			{
+				nf.visible = false;
+				inf.visible = false;
+				okb.visible = false;
+				code.text = "";
+			}
+			
+			private function scan():void
+			{
+				status.text = "";
+				barcodeScanner.scan(scanSuccess, scanError);
+			}
+			
+			
+			private function scanSuccess(result:Result):void
+			{
+				code.text = result.text;
+				gotCode();
+			}
+			
+			private function scanError():void
+			{
+				status.text = "Scan Error";
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<cordova:valuesImpl>
+		<js:SimpleCSSValuesImpl />
+	</cordova:valuesImpl>
+	
+	<cordova:initialView>
+		<js:View width="100%" height="100%">
+		    <js:beads>
+		      <js:VerticalLayout />
+		    </js:beads>
+		    <js:Label id="status" width="100%" text="starting..." />
+			<js:VContainer id="vc" width="100%" height="300">
+				<js:HContainer width="100%" height="40" >
+					<js:Label text="Enter Quantity" width="200" />
+					<js:TextInput id="quantity" width="200" text="1"/>
+				</js:HContainer>
+				<js:HContainer width="100%" height="40" >
+					<js:Label text="Enter UPC Code" width="200" />
+					<js:TextInput id="code" width="200" />
+					<js:TextButton text="Enter" click="gotCode()"/>
+				</js:HContainer>
+				<js:TextButton text="Scan" click="scan()" width="100" height="100"/>
+				<js:MultilineLabel id="description" width="100%" height="100" />
+			</js:VContainer>
+			<js:HContainer id="nf" width="100%" height="40" visible="false" >
+				<js:Label id="inf" text="Item Not Found" width="200" visible="false"/>
+				<js:TextButton id="okb" text="OK" click="getCode()" visible="false"/>
+			</js:HContainer>
+		</js:View>
+	</cordova:initialView>
+	
+ </cordova:Application>

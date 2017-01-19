@@ -1,0 +1,169 @@
+<?xml version="1.0" ?>
+
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<project name="BatchScanner" default="main" basedir=".">
+    
+    <property environment="env" />
+    <condition property="isWindows" value="windows">
+        <os family="windows" />
+    </condition>
+    <condition property="ADL" value="adl.exe">
+    	<isset property="isWindows" />
+    </condition>
+    <property name="ADL" value="adl" />
+
+    <property name="FLEXJS_HOME" value="${env.FLEX_HOME}" />
+    <property name="AIR_HOME" value="${env.AIR_HOME}" />
+
+    <condition property="AIR_RUNTIME" value="${AIR_HOME}/runtimes/air/win">
+    	<isset property="isWindows" />
+    </condition>
+    <property name="AIR_RUNTIME" value="${AIR_HOME}/runtimes/air/mac" />
+
+    <condition property="APP_STORAGE" value="${env.APPDATA}/org.apache.flex/Local Store">
+    	<isset property="isWindows" />
+    </condition>
+    <property name="APP_STORAGE" value="${env.HOME}/Library/Application Support/org.apache.flex/Local Store" />
+
+    <fail message="Can't find js.swc.  Set FLEXJS_HOME to FLEXJS SDK or flex-asjs folder">
+        <condition>
+            <not>
+                <available file="${FLEXJS_HOME}/js/libs/js.swc" type="file" />
+            </not>
+        </condition>
+    </fail>
+
+    <condition property="FALCON_HOME" value="${env.FALCON_HOME}">
+        <and>
+            <not>
+                <isset property="FALCON_HOME" />
+            </not>
+            <available file="${env.FALCON_HOME}/lib/falcon-mxmlc.jar" type="file" />
+        </and>
+    </condition>
+    
+    <condition property="FALCON_HOME" value="${FLEXJS_HOME}">
+        <and>
+            <not>
+                <isset property="FALCON_HOME" />
+            </not>
+            <available file="${FLEXJS_HOME}/lib/falcon-mxmlc.jar" type="file" />
+        </and>
+    </condition>
+    
+    <fail message="Can't find falcon-mxmlc.jar.  Set FALCON_HOME to FLEXJS SDK or flex-falcon\compiler folder">
+        <condition>
+            <not>
+                <available file="${FALCON_HOME}/lib/falcon-mxmlc.jar" type="file" />
+            </not>
+        </condition>
+    </fail>
+   
+    <condition property="FALCONJX_HOME" value="${env.FALCONJX_HOME}">
+        <and>
+            <not>
+                <isset property="FALCONJX_HOME" />
+            </not>
+            <available file="${env.FALCONJX_HOME}/lib/jsc.jar" type="file" />
+        </and>
+    </condition>
+    
+    <condition property="FALCONJX_HOME" value="${FLEXJS_HOME}/js">
+        <and>
+            <not>
+                <isset property="FALCONJX_HOME" />
+            </not>
+            <available file="${FLEXJS_HOME}/js/lib/jsc.jar" type="file" />
+        </and>
+    </condition>
+        
+    <fail message="Can't find jsc.jar.  Set FALCONJX_HOME to FLEXJS SDK or flex-falcon\compiler-jx folder">
+        <condition>
+            <not>
+                <available file="${FALCONJX_HOME}/lib/jsc.jar" type="file" />
+            </not>
+        </condition>
+    </fail>
+   
+    <target name="main" depends="mxmlc, mxmljsc, cordova" />
+
+    <target name="mxmlc" >
+        <mkdir dir="${basedir}/target" />
+        <copy file="${basedir}/src/main/flex/BatchScanner-app.xml"
+        todir="${basedir}/target" />
+        <java jar="${FALCON_HOME}/lib/falcon-mxmlc.jar" fork="true"
+            failonerror="true">
+            <arg value="-load-config=${FLEXJS_HOME}/frameworks/air-config.xml" />
+            <arg value="-debug" />
+            <arg value="-library-path+=${basedir}/../barcodeScanner/target/barcodeScanner.swc" />
+            <arg value="-library-path+=${basedir}/../notification/target/notification.swc" />
+            <arg value="-output=${basedir}/target/BatchScanner.swf" />
+            <arg value="${basedir}/src/main/flex/BatchScanner.mxml" />
+        </java>
+        <mkdir dir="${APP_STORAGE}" />
+	<copy file="${basedir}/src/main/resources/ksdct.txt" tofile="${APP_STORAGE}/ksdct.txt" />
+    </target>
+    
+    <target name="mxmljsc" >
+        <mkdir dir="${basedir}/target" />
+        <java jar="${FALCONJX_HOME}/lib/mxmlc.jar" fork="true"
+            failonerror="true">
+            <arg value="-load-config=${FLEXJS_HOME}/frameworks/air-config.xml" />
+            <arg value="-debug" />
+            <arg value="-js-output-type=FLEXJS" />
+            <arg value="-external-library-path+=${basedir}/../barcodeScanner/target/barcodeScanner.swc" />
+            <arg value="-external-library-path+=${basedir}/../notification/target/notification.swc" />
+            <arg value="-external-library-path+=${FLEXJS_HOME}/js/libs/cordova.swc" />
+            <arg value="-output=${basedir}/target/javascript" />
+            <arg value="${basedir}/src/main/flex/BatchScanner.mxml" />
+        </java>
+    </target>
+
+    <target name="cordova">
+        <ant antfile="${FLEXJS_HOME}/cordova-build.xml" dir="${basedir}" />
+        <ant antfile="${FLEXJS_HOME}/cordova-build.xml" dir="${basedir}" target="load-plugin" >
+            <property name="plugin" value="cordova-plugin-barcodescanner" />
+        </ant>
+        <ant antfile="${FLEXJS_HOME}/cordova-build.xml" dir="${basedir}" target="load-plugin" >
+            <property name="plugin" value="cordova-plugin-dialogs" />
+        </ant>
+        <echo>Copy ${basedir}/src/main/resources/ksdct.txt to device external storage Android/data/org.apache.flex.examples.BatchScanner/files</echo>
+    </target>
+
+    <target name="run.air">
+        <exec executable="${AIR_HOME}/bin/${ADL}" dir="${basedir}/target">
+    	    <arg value="-runtime" />
+    	    <arg value="${AIR_RUNTIME}" />
+    	    <arg value="${basedir}/target/BatchScanner-app.xml" />
+    	</exec>
+    </target>
+
+    <target name="run.android">
+        <ant antfile="${FLEXJS_HOME}/cordova-build.xml" dir="${basedir}" target="run.android" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${basedir}/target" failonerror="false" includeEmptyDirs="true"/>
+    </target>
+    
+    <target name="wipe" depends="clean">
+    </target>
+</project>

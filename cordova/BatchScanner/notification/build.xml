@@ -1,0 +1,126 @@
+<?xml version="1.0" ?>
+
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<project name="notification" default="main" basedir=".">
+    
+    <property environment="env" />
+
+    <property name="FLEXJS_HOME" value="${env.FLEX_HOME}" />
+    <property name="AIR_HOME" value="${env.AIR_HOME}" />
+
+    <fail message="Can't find js.swc.  Set FLEXJS_HOME to FLEXJS SDK or flex-asjs folder">
+        <condition>
+            <not>
+                <available file="${FLEXJS_HOME}/js/libs/js.swc" type="file" />
+            </not>
+        </condition>
+    </fail>
+
+    <condition property="FALCON_HOME" value="${env.FALCON_HOME}">
+        <and>
+            <not>
+                <isset property="FALCON_HOME" />
+            </not>
+            <available file="${env.FALCON_HOME}/lib/falcon-mxmlc.jar" type="file" />
+        </and>
+    </condition>
+    
+    <condition property="FALCON_HOME" value="${FLEXJS_HOME}">
+        <and>
+            <not>
+                <isset property="FALCON_HOME" />
+            </not>
+            <available file="${FLEXJS_HOME}/lib/falcon-mxmlc.jar" type="file" />
+        </and>
+    </condition>
+    
+    <fail message="Can't find falcon-mxmlc.jar.  Set FALCON_HOME to FLEXJS SDK or flex-falcon\compiler folder">
+        <condition>
+            <not>
+                <available file="${FALCON_HOME}/lib/falcon-mxmlc.jar" type="file" />
+            </not>
+        </condition>
+    </fail>
+   
+    <condition property="FALCONJX_HOME" value="${env.FALCONJX_HOME}">
+        <and>
+            <not>
+                <isset property="FALCONJX_HOME" />
+            </not>
+            <available file="${env.FALCONJX_HOME}/lib/jsc.jar" type="file" />
+        </and>
+    </condition>
+    
+    <condition property="FALCONJX_HOME" value="${FLEXJS_HOME}/js">
+        <and>
+            <not>
+                <isset property="FALCONJX_HOME" />
+            </not>
+            <available file="${FLEXJS_HOME}/js/lib/jsc.jar" type="file" />
+        </and>
+    </condition>
+        
+    <fail message="Can't find jsc.jar.  Set FALCONJX_HOME to FLEXJS SDK or flex-falcon\compiler-jx folder">
+        <condition>
+            <not>
+                <available file="${FALCONJX_HOME}/lib/jsc.jar" type="file" />
+            </not>
+        </condition>
+    </fail>
+   
+    <target name="main" depends="compc, compjsc" />
+
+    <target name="compc" >
+        <mkdir dir="${basedir}/target" />
+        <copy file="${basedir}/src/main/config/compile-as-config.xml"
+        todir="${basedir}/target" />
+        <java jar="${FALCON_HOME}/lib/falcon-compc.jar" fork="true"
+            failonerror="true">
+            <arg value="-debug" />
+            <arg value="+FLEXJS_HOME=${FLEXJS_HOME}" />
+            <arg value="+AIR_HOME=${AIR_HOME}" />
+            <arg value="-load-config=${basedir}/target/compile-as-config.xml" />
+            <arg value="-output=${basedir}/target/notification.swc" />
+        </java>
+    </target>
+    
+    <target name="compjsc" >
+        <mkdir dir="${basedir}/target" />
+        <copy file="${basedir}/src/main/config/compile-js-config.xml"
+        todir="${basedir}/target" />
+        <java jar="${FALCONJX_HOME}/lib/compc.jar" fork="true"
+            failonerror="true">
+            <arg value="-debug" />
+            <arg value="+FLEXJS_HOME=${FLEXJS_HOME}" />
+            <arg value="+AIR_HOME=${AIR_HOME}" />
+            <arg value="-js-output-type=FLEXJS" />
+            <arg value="-load-config=${basedir}/target/compile-js-config.xml" />
+            <arg value="-output=${basedir}/target/notification.swc" />
+        </java>
+    </target>
+
+    <target name="clean">
+        <delete dir="${basedir}/target" failonerror="false" includeEmptyDirs="true"/>
+    </target>
+    
+    <target name="wipe" depends="clean">
+    </target>
+</project>
