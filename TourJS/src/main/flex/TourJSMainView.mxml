@@ -151,7 +151,7 @@ limitations under the License.
 					<js:beads>
 						<js:ScrollingViewport />
 					</js:beads>
-					<js:Label id="codeArea" width="100%"/>
+					<js:MXMLViewer id="codeArea" width="100%"/>
 				</js:Container>
 			</js:VContainer>
 			
