@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<h1>How to use JS Libraries with Apache FlexJS</h1>
+<p>Apache FlexJS comes with a sets of components that utilize JS Frameworks like JQuery, CreateJS and Material Design Lite. But what if you want to use some other JS library in your application. This example will show you how to do that.</p>
+<p>This example utilizes three Apache Cordova plugins to build a Batch UPC Scanner for an Android device. UPC is a popular bar code format in the United States. A UPC code looks like this:</p>
+<p><img src="onebarcode.png" width="121" height="51" alt="UPC code" /></p>
+<p>A Batch UPC Scanner is typically a custom handheld portable device with a laser scanner for reading UPC codes and some memory for recording the codes. These devices are used in inventory tracking applications and batch scanners are particularly useful in environments where there is no wireless communications. The codes are batched (or stored) on the device and later off-loaded and used by some other software. Batch scanning can be pretty simple, but this particular application uses a database so that the application can warn the user that the item scanned was not in the database.</p>
+<p>Apache Cordova has a plugin that uses the device's camera to read UPC codes. We also need the file plugin to read and write the database. And finally we decide to use the dialog plugin to provide some audio feedback that the scan was successful or not.</p>
+<p>The file plugin (cordova-plugin-file) is the easiest to use in FlexJS. The Storage.swc and the FlexJS Cordova Ant Script (cordova_build.xml) automatically install the file plugin if you use the Storage.swc classes in your application. That's because the file plugin is so commonly used in FlexJS Cordova applications that we automated its inclusion.</p>
+<p>But at the time of this writing, no SWC (FlexJS Libraries are stored in SWCs similar to how Java stores libraries in JAR files) existed for cordova-plugin-barcodescanner and cordova-plugin-dialog. So we want to quickly build SWCs for these plugins. Once built, they can be shared with others and they will also enjoy the benefits of type-checking in the FlexJS compilers. In fact, during the writing of the SWCs for these plugins, I mis-typed the name of one of the variables the BarCode plugin creates and didn't realize it until I actually stepped into it in the debugger. By using MXML and/or ActionScript and a SWC for the plugin, other users of the plugin won't be able to mis-type the name of those variables without the compiler catching it, saving time and hassle.</p>
+<p>There are two kinds of SWCs in FlexJS. All FlexJS SWCs contain both compiled ActionScript and some JavaScript files. Lots of SWCs are libraries of code to be linked into the application. But other SWCs simply define the APIs for an existing JS library. These are known as &quot;typedef&quot; SWCs. The code in a typedef SWC is not linked into the application. Instead, the ActionScript definitions in the SWC are used by the compiler to make sure you are calling the APIs correctly, and the JavaScript definitions in the SWC are used to tell the Google Closure Compiler not to rename identifiers and to resolve which JS files need to be copied from SWCs into the final output. In a typedef SWC, the JavaScript isn't runnable code, it is really a JavaScript-formatted description of the APIs known by Google as &quot;externs&quot; format. You can read about externs <a href="https://developers.google.com/closure/compiler/docs/api-tutorial3">here</a>.</p>
+<p>When creating a typedef SWC, you may find that an externs-formatted JavaScript file exists for the library.  Google provides a list of known externs and a reference to some tools for making them <a href="https://github.com/google/closure-compiler/wiki/Externs-For-Common-Libraries">here</a>. If you have an externs file, you can use the FlexJS ExternC compiler to generate the ActionScript definitions. Several SWCs in the FlexJS flex-typedefs repo are built starting with an externs file and are bundled with FlexJS. But if no externs file exists, you can create your own externs file and run it through ExternC or write the ActionScript definitions and use the FlexJS compiler to cross-compile the ActionScript and generate the externs file(s) and package it all into a SWC. I believe that starting with ActionScript is more efficient because the compiler will catch errors sooner.</p>
+<p>The process of creating the BatchScanner is thus: </p>
+<ul>
+  <li>create the BarCodeScanner typedefs SWC </li>
+  <li>create the Dialog typedefs SWC</li>
+  <li>create the BatchScanner application</li>
+  <li>test with Adobe AIR    </li>
+  <li>test on Android device</li>
+</ul>
+<h3>The BarCodeScanner Typedefs SWC</h3>
+<p>The cordova-plugin-barcodescanner essentially has one API. It looks like:</p>
+<blockquote>
+  <p><code>cordova.plugins.barcodeScanner.scan(successCallback, failCallback);</code></p>
+</blockquote>
+<p>The successCallback takes one parameter, which is an object containing a 'text', 'format' and 'cancelled' properties. I decided to say that <code>cordova.plugins</code> is the package name, that <code>barcodeScanner</code> is a class and <code>scan</code> is a method on that class. I could have decided that <code>cordova.plugins.barcodeScanner</code> was the package name and <code>scan</code> was a package-level function. Thus the code will look like this:</p>
+<p><code>package cordova.plugins<br />
+  {<br />
+  /**<br />
+* The ActionScript typedefs for oordova.plugin.BarcodeScanner <br />
+* <br />
+*  @externs<br />
+*/<br />
+public class barcodeScanner<br />
+{<br />
+}<br />
+</code><code><br />
+  /**<br />
+  * scan.<br />
+  */<br />
+  public static function scan(success:Function, fail:Function):void<br />
+  {<br />
+}</code></p>
+<p>The key points are that the @externs ASDoc annotation is used to mark this class as a typedef. This causes the compiler to handle this file differently than other files that contain actual code. And note that there aren't any function bodies (a return statement is needed for typedefs that return something).</p>
+<p>This gets cross-compiled into JS that looks like this:</p>
+<p><code>/**<br />
+  *<br />
+* @fileoverview<br />
+* @externs<br />
+*<br />
+* @suppress {checkTypes|accessControls}<br />
+*/</code></p>
+<p><code>goog.provide('cordova.plugins.barcodeScanner');</code>	</p>
+<p><code>/**<br />
+  * @constructor<br />
+  */<br />
+  cordova.plugins.barcodeScanner = function() {<br />
+  };<br />
+</code></p>
+<p><code>/**<br />
+  * scan.<br />
+  *<br />
+  * @export<br />
+  * @param {Function} success<br />
+  * @param {Function} fail<br />
+  */<br />
+  cordova.plugins.barcodeScanner.scan = function(success, fail) {<br />
+  <br />
+  };</code><br />
+</p>
+<p>Not only is the ActionScript version shorter, but there is less room for error. In the ActionScript version, I only had to type 'barcodeScanner' once. In the JavaScript version, you could mis-spell the comments like &quot;@param&quot; or &quot;{Function}&quot; and nobody will know until you try to use the file later. In ActionScript, if you mis-spell &quot;Function&quot;, the compiler will tell you right away.</p>
+<p>Then, in addition, instead of just having the successFunction take an Object (which it actually does do in the JS runtime), I added a &quot;Result&quot; class as the parameter type for the successFunction. The user of the barcodeScanner.swc doesn't have to use the Result as the parameter type, they can still use Object, but if they use Result, then the compiler will catch mis-typing 'result.text' as 'result.Text'.</p>
+<p>And with that, the cordova-plugin-barcodescanner is ready to be used in Cordova projects with FlexJS, and uses of the barcode scanner plugin will be type-checked by the compiler.</p>
+<h3>But What About the SWF Version?</h3>
+<p>The ActionScript for the externs is not runnable code. So while you could build a SWF from this code, it wouldn't do anything. Now, there are barcode scanner Air Native Extensions (ANEs) but I personally was not interested in making the SWF version, which would run in Adobe AIR, have the equivalent functionality as the Cordova plugin. But I am interested in using Adobe AIR to debug my application logic, so I need just enough functionality to enter a barcode via the successFunction so the rest of the application code can function like it would on the device. Using Adobe AIR to debug means I don't have to take the time to upload the application to the device and set up remote debugging, and it means that the Adobe AIR runtime is doing runtime type-checking on my code as well.</p>
+<p>So, all I really need on the Adobe AIR side is what some folks call a &quot;mock&quot;. A truly simple mock would just return a fixed string in the successFunction, but I decided I want to put up a popup where I can type in a UPCCode and when I hit OK, it will call the successFunction. So, if you look at the actual source, you will see several COMPILE::SWF conditional compilation sections where I implement Flash/AIR calls to put up a popup and watch for the OK button, etc. Then I can debug the application's use of the data returned in the successFunction and reduce the likelihood that I'll have to spend as much time remote debugging on the device or in an emulator.</p>
+<p>The key trick to using a mock in a typedefs SWC is that the SWF build has to put the typedefs SWC on the regular library-path, not the external-library-path. The JS build, however, must put the typedefs SWC on the external-library-path. The config.xml files reflect that difference.</p>
+<h3>The Dialog Typedefs SWC</h3>
+<p>The same principles used to create the BarcodeScanner.swc applies to the Dialog Typedefs SWC. I only needed the beep() function for the BatchScanner, so I only implements a Flash/AIR mock for it. Maybe someday someone will fill out the other methods with mocks.</p>
+<h3>The BatchScanner Application</h3>
+<p>The BatchScanner application has a very simple UI. A Button to start the scanner, a TextInput and another Button to accept manual entry of codes, another widget to choose the quantity, and a couple of Labels to display loading status and the name of the inventory item that was scanned. There is also another Label and Button that shows up if an item is not found.</p>
+<p> <code>&lt;js:View width=&quot;100%&quot; height=&quot;100%&quot;&gt;<br />
+  &nbsp;&nbsp;&lt;js:beads&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:VerticalLayout /&gt;<br />
+&nbsp;&nbsp;&lt;/js:beads&gt;<br />
+&nbsp;&nbsp;&lt;js:Label id=&quot;status&quot; width=&quot;100%&quot; text=&quot;starting...&quot; /&gt;<br />
+&nbsp;&nbsp;&lt;js:VContainer id=&quot;vc&quot; width=&quot;100%&quot; height=&quot;300&quot;&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:HContainer width=&quot;100%&quot; height=&quot;40&quot; &gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:Label text=&quot;Enter Quantity&quot; width=&quot;200&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:TextInput id=&quot;quantity&quot; width=&quot;200&quot; text=&quot;1&quot;/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/js:HContainer&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:HContainer width=&quot;100%&quot; height=&quot;40&quot; &gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:Label text=&quot;Enter UPC Code&quot; width=&quot;200&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:TextInput id=&quot;code&quot; width=&quot;200&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:TextButton text=&quot;Enter&quot; click=&quot;gotCode()&quot;/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/js:HContainer&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:TextButton text=&quot;Scan&quot; click=&quot;scan()&quot; width=&quot;100&quot; height=&quot;100&quot;/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:MultilineLabel id=&quot;description&quot; width=&quot;100%&quot; height=&quot;100&quot; /&gt;<br />
+&nbsp;&nbsp;&lt;/js:VContainer&gt;<br />
+&nbsp;&nbsp;&lt;js:HContainer id=&quot;nf&quot; width=&quot;100%&quot; height=&quot;40&quot; visible=&quot;false&quot; &gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:Label id=&quot;inf&quot; text=&quot;Item Not Found&quot; width=&quot;200&quot; visible=&quot;false&quot;/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;js:TextButton id=&quot;okb&quot; text=&quot;OK&quot; click=&quot;getCode()&quot; visible=&quot;false&quot;/&gt;<br />
+&nbsp;&nbsp;&lt;/js:HContainer&gt;<br />
+&lt;/js:View&gt;</code><br />
+</p>
+<p>The database of inventory items is a tab-delimited text file. The format is inherited from legacy software that was used on the handhelds. The quantity is stored in 4 digits (no item is expected to have a quantity greater than 9999). That way as the quantity is updated, the file size doesn't grow. That way we know we won't run out of storage space if the database fits on the handheld at the beginning of the inventory counting. So lines in the file look like this:</p>
+<p><code>000000000105	Product	#1	0000<br />
+  000000000106	Product	#2	0000</code><br />
+</p>
+<p>In the example source, I used Apache project names as inventory items.</p>
+<p>The application uses org.apache.flex.storage.PermanentStorage to read and write the database. The default for PermanentStorage is to put files in local or internal storage, but that is harder to access from a computer when you want to upload a new database or download the database with the updated quantities. So, the application code switches to use external storage in this code:</p>
+<p> <code>&lt;fx:Style&gt;<br />
+&nbsp;&nbsp;@namespace js &quot;library://ns.apache.org/flexjs/basic&quot;;<br />
+&nbsp;&nbsp;js|PermanentStorage<br />
+&nbsp;&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IStorageProvider: ClassReference(&quot;org.apache.flex.storage.providers.AndroidExternalStorageProvider&quot;);<br />
+&nbsp;&nbsp;}</code></p>
+<p><code> @media -flex-flash <br />
+  {<br />
+  &nbsp;&nbsp;js|PermanentStorage<br />
+  &nbsp;&nbsp;{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;IStorageProvider: ClassReference(&quot;org.apache.flex.storage.providers.AirStorageProvider&quot;);<br />
+  &nbsp;&nbsp;}<br />
+</code><code>}<br />
+&lt;/fx:Style&gt;</code></p>
+<p>FlexJS (and Flex) CSS uses namespaces. The PermanentStorage and other components are being pulled from the Basic component set which has a URI of </code><code>&quot;library://ns.apache.org/flexjs/basic&quot;. Other component sets will have different URIs so you can switch between component sets by assigning different URIs to the prefixes like &quot;js&quot;. So, the above says to use <code>AndroidExternalStorageProvider</code> for JS output, and <code>AirStorageProvider</code> for testing on AIR. FlexJS uses the special -flex-flash media query for Flash-only CSS values.</p>
+<p>The sample database is small, but some databases can have thousands of items so the FileIO class builds an index to speed up searching. Other than that, it is straightforward: read in the entire file, search for line endings, update the file line and write out the entire file.</p>
+<h3>Testing with Adobe AIR</h3>
+<p>I like testing my application logic with Flash or Adobe AIR before taking the time to upload the code to the device and having to debug remotely. So, first I build the Flash/AIR version of the BatchScanner. I used Apache Ant to script this process. FlexJS supports Maven as well. Then to run it use &quot;ant run.air&quot;. </p>
+<p>The compiler arguments if you want to build the AIR version from the command line are (relative to the BatchScanner folder and where $FLEXJS_HOME is the path to an Apache FlexJS SDK, and assuming the plugin SWCs are in the &quot;target&quot; folder):</p>
+<p><code>$FLEXJS_HOME/bin/mxmlc -load-config=$FLEXJS_HOME/frameworks/air-config.xml -debug -library-path+=../barcodeScanner/target/barcodeScanner.swc -library-path+=../notification/target/notification.swc src/main/flex/BatchScanner.mxml</code></p>
+<p>Before running the application, you have to place the data file in AIR's applicationStorageDirectory. The Ant script does that for you. Otherwise, it goes in:</p>
+<p>On Mac: <code>$HOME/Library/Application Support/org.apache.flex/Local Store</code></p>
+<p>On Windows: <code>$APPDATA/org.apache.flex/Local Store</code></p>
+<p></p>
+<p>In src/main/resources there is a BatchScanner-app.xml file. Place it next to the output SWF and use one of the following to run it:</p>
+<p>On Mac: <code>$FLEXJS_HOME/bin/adl -runtime=$FLEXJS_HOME/runtimes/air/mac BatchScanner-app.xml</code></p>
+<p>On Windows: <code>$FLEXJS_HOME/bin/adl -runtime=$FLEXJS_HOME/runtimes/air/mac BatchScanner-app.xml</code></p>
+<h3>Testing On The Device</h3>
+<p>The Ant script takes care of calling the cross-compiler to produce the JS output, creating a Cordova project, and adding the plugins. It presumes that Cordova has been installed via NPM and both Cordova CLI and NPM are in the environment's PATH variable. To run, hook up an Androiddevice via USB and use &quot;ant run.android&quot; from the BatchScanner folder.</p>
+<p>The compiler arguments if you want to build the Android version from the command line are (relative to the BatchScanner folder and where $FLEXJS_HOME is the path to an Apache FlexJS SDK, and assuming the plugin SWCs are in the &quot;target&quot; folder)</p>
+<p><code>$FLEXJS_HOME/bin/mxmlc -load-config=$FLEXJS_HOME/frameworks/air-config.xml -debug -external-librar</code><code>y-path+=../barcodeScanner/target/barcodeScanner.swc -external-library-path+=../notification/target/notification.swc src/main/flex/BatchScanner.mxml</code><br />
+</p>
+<p>Then create a folder for your Cordova project. The Ant script creates an &quot;app&quot; folder in the BatchScanner folder. From that folder run:</p>
+<p><code>cordova create BatchScanner org.apache.flex.examples.BatchScanner BatchScanner</code></p>
+<p>This creates a BatchScanner folder in the &quot;app&quot; folder. Next we copy the JS output to the www folder.</p>
+<p>On Mac: <code>cp -r target/bin/js-debug/* app/BatchScanner/www</code></p>
+<p>On Windows: <code>xcopy /s target\bin\js-debug\*.* app\BatchScanner\www</code></p>
+<p>Then, from the app/BatchScanner folder, add the Android code and plugins for Cordova:</p>
+<p><code>cordova platform add android<br />
+  cordova plugin add cordova-plugin-file<br />
+cordova plugin add cordova-plugin-barcodescanner<br />
+cordova plugin add cordova-plugin-dialog
+</code></p>
+<p>Before running the application, you have to place the data file in the &quot;external&quot; storage on the device. How to do that seems to depend a bit on the device. The external storage on my android devices isnt' really a separate SD Card. Instead some of the devices memory is partitioned into the file path sdcard/Android/data. On some devices it is sdcard0/Android/data. Inside that folder, create a folder called &quot;org.apache.flex.examples.BatchScanner&quot; and in that create a folder called &quot;files&quot;. Then copy the ksdct.txt file into the files folder. On one device, I had to create a folder on my Windows computer called &quot;org.apache.flex.examples.BatchScanner, create the &quot;files&quot; folder and place the data file in there, then copy the whole folder into the Android/data folder that shows up when you plug the phone into the computer over USB. I could not create the folders directly using Windows Explorer. On another device, I had to use adb to create the folder and copy the file.</p>
+<p>Then to run, use:</p>
+<p><code>cordova run android</code></p>
+<p>In src/main/resources there is a barcodes.png file. If you display it, you can test the application by scanning in those codes.</p>
+<h3>Summary</h3>
+<p>This article described how to use FlexJS to build a Cordova application that uses  Cordova plugins. FlexJS can save you time and hassle in creating Cordova applications. In the future, the FlexJS tool chain may be able to create the project and add the plugins automatically based on which classes you have linked into your application.</p>
+<p>The article also demonstrated how to use &quot;mocks&quot; for the SWF version if you don't need equivalent functionality for the SWF version.</p>
+</body>
+</html>
