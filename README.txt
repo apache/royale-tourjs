@@ -19,3 +19,7 @@
 Tour de FlexJS - 12 Jan 2017
 
 This repository contains this source and resource files for the Apache FlexJS, "Tour de FlexJS". A collection of examples of every component in the FlexJS framework.
+
+TourJS: The actual “Tour de FlexJS” application. The source and build for this app lies within this directory. The content displayed also lives in this directory within the src/main/resources directory.
+
+Examples: The sources to the samples displayed in the TourJS. 
