@@ -19,30 +19,24 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.flex</groupId>
-    <artifactId>tourjs</artifactId>
+    <groupId>org.apache.flex.tourjs</groupId>
+    <artifactId>examples-tourjs</artifactId>
     <version>0.1.0-SNAPSHOT</version>
+	<relativePath>../../../../pom.xml</relativePath>
   </parent>
-  
-  <groupId>org.apache.flex.tourjs</groupId>
-  <artifactId>tourjs</artifactId>
+
+  <artifactId>SimpleAlert</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>swf</packaging>
 
-  <name>Apache Flex - Tour de FlexJS</name>
+  <name>Apache Flex - FlexJS: Examples: FlexJS: SimpleAlert</name>
 
   <build>
     <sourceDirectory>src/main/flex</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
     <plugins>
 	<plugin>
 	  <groupId>org.apache.flex.flexjs.compiler</groupId>
@@ -53,7 +47,7 @@
             <flashVersion>${version.flash}</flashVersion>
 		    <debug>${compiler.debug}</debug>
 			<outputJavaScript>true</outputJavaScript>
-			<mainClass>TourJS.mxml</mainClass>
+			<mainClass>SimpleAlert.mxml</mainClass>
           </configuration>
           <dependencies>
             <dependency>
@@ -95,23 +89,22 @@
         <configuration>
           <artifacts>
             <artifact>
-              <file>target/tourjs-0.1.0-SNAPSHOT.war</file>
+              <file>target/simplealert-0.1.0-SNAPSHOT.war</file>
               <type>war</type>
             </artifact>
           </artifacts>
         </configuration>
       </plugin>
     </plugins>
-  </build>
-
+	</build>
   <dependencies>
-    <dependency>
+   <dependency>
       <groupId>org.apache.flex.flexjs.framework</groupId>
       <artifactId>Core</artifactId>
       <version>${version.flexjs}</version>
       <type>swc</type>
     </dependency>
-
+	
     <dependency>
       <groupId>com.adobe.flash.framework</groupId>
       <artifactId>playerglobal</artifactId>
@@ -119,22 +112,9 @@
       <type>swc</type>
       <scope>provided</scope>
     </dependency>
-	
-	<dependency>
-      <groupId>org.apache.flex.flexjs.framework</groupId>
-      <artifactId>Express</artifactId>
-      <version>${version.flexjs}</version>
-      <type>swc</type>
-    </dependency>
 	<dependency>
       <groupId>org.apache.flex.flexjs.framework</groupId>
       <artifactId>HTML</artifactId>
-      <version>${version.flexjs}</version>
-      <type>swc</type>
-    </dependency>
-	<dependency>
-      <groupId>org.apache.flex.flexjs.framework</groupId>
-      <artifactId>Network</artifactId>
       <version>${version.flexjs}</version>
       <type>swc</type>
     </dependency>

@@ -13,8 +13,10 @@
   <version>0.1.0-SNAPSHOT</version> 
   <packaging>pom</packaging> 
 
-  <modules> 
-    <module>visualComponents/generalComponents/button</module>
+  <modules>
+	<module>visualComponents/generalComponents/alert/Alert</module>
+	<module>visualComponents/generalComponents/alert/SimpleAlert</module>  
+    <module>visualComponents/generalComponents/button/TextButton</module>
   </modules> 
 
 </project> 
