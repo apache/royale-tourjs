@@ -76,6 +76,8 @@
     <target name="compile" description="Compile Examples" >
         <ant dir="${basedir}/visualComponents/generalComponents/alert/Alert"/>
         <ant dir="${basedir}/visualComponents/generalComponents/alert/SimpleAlert"/>
+        <ant dir="${basedir}/visualComponents/generalComponents/button/TextButton"/>
+        <ant dir="${basedir}/visualComponents/generalComponents/button/ImageButton"/>
     </target>
 	   
     <!--
@@ -91,6 +93,8 @@
     <target name="clean" description="Cleans all SWCs and their resource bundles">
         <ant dir="${basedir}/visualComponents/generalComponents/alert/Alert" target="clean"/>
         <ant dir="${basedir}/visualComponents/generalComponents/alert/SimpleAlert" target="clean"/>
+        <ant dir="${basedir}/visualComponents/generalComponents/button/TextButton" target="clean"/>
+        <ant dir="${basedir}/visualComponents/generalComponents/button/ImageButton" target="clean"/>
     </target>
     
 </project>
