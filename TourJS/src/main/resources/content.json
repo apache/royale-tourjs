@@ -17,8 +17,12 @@
                  	  "title": "Alert",
                  	  "description": "Describe the Alert control",
                  	  "example": [
-                 	  		{"name": "simple.mxml", 
-                 	  		 "source":"content/visualComponents/generalComponents/alert/code/simple.mxml", 
+                 	  		{"name": "Alert.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/Alert/src/main/flex/Alert.mxml", 
+                 	  		 "module_swf":"x/y/z", 
+                 	  		 "module_js":"x/y/z"},
+                 	  		{"name": "SimpleAlert.mxml",
+                 	  		 "source":"content/visualComponents/generalComponents/alert/SimpleAlert/src/main/flex/SimpleAlert.mxml", 
                  	  		 "module_swf":"x/y/z", 
                  	  		 "module_js":"x/y/z"}
                  	  	]},
@@ -27,15 +31,15 @@
                  	  "description": "Describe the Button control",
                  	  "example": [
                  	  		{"name": "plain.mxml", 
-                 	  		 "source":"content/visualComponents/generalComponents/alert/code/simple.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/Alert/src/main/flex/Alert.mxml", 
                  	  		 "module_swf":"x/y/z", 
                  	  		 "module_js":"x/y/z"},
                  	  		{"name": "toggle.mxml", 
-                 	  		 "source":"content/visualComponents/generalComponents/button/code/toggle.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/Alert/src/main/flex/Alert.mxml", 
                  	  		 "module_swf":"x/y/z", 
                  	  		 "module_js":"x/y/z"},
                  	  		{"name": "radio.mxml", 
-                 	  		 "source":"content/visualComponents/generalComponents/button/code/radio.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/Alert/src/main/flex/Alert.mxml", 
                  	  		 "module_swf":"x/y/z", 
                  	  		 "module_js":"x/y/z"}
                  	  	]},
@@ -44,11 +48,11 @@
                  	  "description":"Describes something else",
                  	  "example": [
                  	  		{"name": "plain.mxml", 
-                 	  		 "source":"content/visualComponents/generalComponents/alert/code/simple.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/Alert/src/main/flex/Alert.mxml", 
                  	  		 "module_swf":"x/y/z", 
                  	  		 "module_js":"x/y/z"},
                  	  		{"name": "toggle.mxml", 
-                 	  		 "source":"content/visualComponents/generalComponents/alert/code/simple.mxml", 
+                 	  		 "source":"content/visualComponents/generalComponents/alert/Alert/src/main/flex/Alert.mxml", 
                  	  		 "module_swf":"x/y/z", 
                  	  		 "module_js":"x/y/z"}
                  	  	]}
