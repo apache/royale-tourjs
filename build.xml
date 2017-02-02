@@ -53,4 +53,8 @@
 		<echo message="build complete" />
 	</target>
 	
+	<target name="touronly" depends="build-tourjs,copyfiles">
+		<echo message="tour build complete" />
+	</target>
+	
 </project>

@@ -20,11 +20,15 @@ limitations under the License.
 <js:HView xmlns:fx="http://ns.adobe.com/mxml/2009"
 				xmlns:js="library://ns.apache.org/flexjs/express"
 				xmlns:basic="library://ns.apache.org/flexjs/basic"
-			    width="100%" height="100%" initComplete="loadInitialData()">
+			    width="100%" height="100%" 
+				initComplete="loadInitialData()">
     <fx:Script>
         <![CDATA[
 			import org.apache.flex.collections.HierarchicalData;
 			import org.apache.flex.collections.converters.JSONItemConverter;
+			import org.apache.flex.html.beads.ContainerView;
+			import org.apache.flex.core.UIBase;
+			import org.apache.flex.html.Module;
 			     
 			[Bindable]
 			private var tempExampleNames = [];
@@ -33,6 +37,7 @@ limitations under the License.
 			private var contentData:HierarchicalData;
 			
 			private var currentExamples:Array;
+			private var currentExample:Object;
 			
 			private function loadInitialData():void {
 				service.url = "resources/content.json";
@@ -53,14 +58,9 @@ limitations under the License.
 			{
 				var node:Object = contentTree.selectedItem;
 				if (node["type"] == "group") {
-					exampleTitle.text = node["title"];
-					exampleDescription.text = node["description"];
 					codeArea.text = "";
 				} else {
-					exampleTitle.text = node["title"];
-					exampleDescription.text = node["description"];
-					codeArea.text = "";
-					
+					codeArea.text = "";					
 					var exampleNames:Array = [];
 					
 					currentExamples = node["example"];
@@ -91,17 +91,28 @@ limitations under the License.
 			
 			private function showExampleSource(index:int):void
 			{
-				var item:Object = currentExamples[index];
+				currentExample = currentExamples[index];
 				
-				codeLoader.url = "resources/" + item["source"];
+				codeLoader.url = "resources/" + currentExample["source"];
 				codeLoader.send();
 				codeLoader.addEventListener("complete", codeLoaded);
 				codeLoader.addEventListener("ioError", codeError);
+				
+				runExample();
 			}
 			
 			private function changeExample():void
 			{
 				showExampleSource(buttonBar.selectedIndex);
+			}
+						
+			private function runExample():void
+			{
+				var item:Object = currentExample;
+				var swfURL:String = "resources/" + item["module_swf"];
+				var htmlURL:String = "resources/" + item["module_js"];
+				
+				exampleModule.loadContent(swfURL, htmlURL);
 			}
 		]]>
     </fx:Script>
@@ -116,6 +127,7 @@ limitations under the License.
 		}
 		.RunningExample {
 			margin-bottom: 5px;
+			background-color: #FEFEFE;
 		}
 		.ExampleCode {
 			background-color: #FEFEFE;
@@ -137,12 +149,8 @@ limitations under the License.
 		</js:Panel>
 		
 		<js:VContainer width="74%" height="100%">
-			<js:Panel title="Example" width="100%" height="50%" className="RunningExample">
-				<js:beads>
-					<js:VerticalLayout />
-				</js:beads>
-				<js:Label id="exampleTitle" width="100%" height="22" />
-				<js:Label id="exampleDescription" width="100%" height="22" />
+			<js:Panel id="topPanel" title="Example" width="100%" height="50%" className="RunningExample">
+				<basic:Module id="exampleModule" width="100%" height="100%" />
 			</js:Panel>
 			
 			<js:VContainer width="100%" height="50%">

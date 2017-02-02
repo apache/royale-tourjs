@@ -19,12 +19,12 @@
                  	  "example": [
                  	  		{"name": "Alert.mxml", 
                  	  		 "source":"content/visualComponents/generalComponents/alert/Alert/src/main/flex/Alert.mxml", 
-                 	  		 "module_swf":"x/y/z", 
-                 	  		 "module_js":"x/y/z"},
+                 	  		 "module_swf":"content/visualComponents/generalComponents/alert/Alert/bin-debug/Alert.swf", 
+                 	  		 "module_js":"content/visualComponents/generalComponents/alert/Alert/bin/js-release/index.html"},
                  	  		{"name": "SimpleAlert.mxml",
                  	  		 "source":"content/visualComponents/generalComponents/alert/SimpleAlert/src/main/flex/SimpleAlert.mxml", 
-                 	  		 "module_swf":"x/y/z", 
-                 	  		 "module_js":"x/y/z"}
+                 	  		 "module_swf":"content/visualComponents/generalComponents/alert/SimpleAlert/bin-debug/SimpleAlert.swf", 
+                 	  		 "module_js":"content/visualComponents/generalComponents/alert/SimpleAlert/bin/js-release/index.html"}
                  	  	]},
                  	 {"type":"component",
                  	  "title":"Button",
@@ -32,12 +32,12 @@
                  	  "example": [
                  	  		{"name": "TextButton.mxml", 
                  	  		 "source":"content/visualComponents/generalComponents/button/TextButton/src/main/flex/TextButton.mxml", 
-                 	  		 "module_swf":"x/y/z", 
-                 	  		 "module_js":"x/y/z"},
+                 	  		 "module_swf":"content/visualComponents/generalComponents/button/TextButton/bin-debug/TextButton.swf", 
+                 	  		 "module_js":"content/visualComponents/generalComponents/button/TextButton/bin/js-release/index.html"},
                  	  		{"name": "ImageButton.mxml", 
                  	  		 "source":"content/visualComponents/generalComponents/button/ImageButton/src/main/flex/ImageButton.mxml", 
-                 	  		 "module_swf":"x/y/z", 
-                 	  		 "module_js":"x/y/z"}
+                 	  		 "module_swf":"content/visualComponents/generalComponents/button/ImageButton/bin-debug/ImageButton.swf", 
+                 	  		 "module_js":"content/visualComponents/generalComponents/button/ImageButton/bin/js-release/index.html"}
                  	  	]},
                  	 {"type":"component",
                  	  "title":"Other",
