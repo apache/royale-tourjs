@@ -18,38 +18,52 @@ limitations under the License.
 
 -->
 <js:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
-                   xmlns:js="library://ns.apache.org/flexjs/basic" >
-    <fx:Script>
-    	<![CDATA[
-    		import org.apache.flex.html.SimpleAlert;
-    		
-    		private function startProcess():void {
-    			SimpleAlert.show("Process started!", mainView);
-    		}
-    		
-    		private function stopProcess():void {
-    			SimpleAlert.show("Process stopped!", mainView);
-    		}
-    		
-    	]]>
-    </fx:Script>
-    <fx:Style>
-    	@namespace js "library://ns.apache.org/flexjs/basic";
-    	
-    	js|ImageButton {
-    	    margin: 10px;
-    	}
-    </fx:Style>
+                   xmlns:js="library://ns.apache.org/flexjs/basic"
+				   xmlns:local="*">
+	<fx:Script>
+		<![CDATA[
+			import org.apache.flex.html.SimpleAlert;
+			import org.apache.flex.utils.URLUtils;
+			import org.apache.flex.utils.StringUtil;
+			import org.apache.flex.html.ImageButton;
+			
+			[Bindable]
+			private var outputStatus:String = "";
+			
+			private function startProcess():void {
+				outputStatus = "Process Started!";
+			}
+			
+			private function stopProcess():void {
+				outputStatus = "Process Stopped!";
+			}
+		]]>
+	</fx:Script>
+	
+	<js:beads>
+		<js:ApplicationDataBinding />
+	</js:beads>
+    
     <js:valuesImpl>
         <js:SimpleCSSValuesImpl />
     </js:valuesImpl>
     <js:initialView>
-        <js:View id="mainView">
-        	<js:beads>
-        		<js:VerticalLayout />
-        	</js:beads>
-        	<js:ImageButton source="start-button.png" click="startProcess()" />
-        	<js:ImageButton source="stop-button.png" click="stopProcess()" />
-        </js:View>
+		<js:View id="mainView">
+			<js:beads>
+				<js:VerticalLayout />
+			</js:beads>
+			
+			<js:Label text="Image Buttons Below" />
+			<js:Spacer height="50" />
+			
+			<js:HContainer>
+				<js:ImageButton source="{URLUtils.getFullPath(mainView,'start-button.png')}" click="startProcess()" />
+				<js:Spacer width="10" />
+				<js:Label text="{outputStatus}" width="150" />
+				<js:Spacer width="10" />
+				<js:ImageButton id="stopButton" source="{URLUtils.getFullPath(mainView,'stop-button.png')}" click="stopProcess()" />
+			</js:HContainer>
+			
+		</js:View>
     </js:initialView>
 </js:Application>
