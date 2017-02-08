@@ -95,6 +95,44 @@
           </artifacts>
         </configuration>
       </plugin>
+	  <plugin>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>3.0.2</version>
+			<executions>
+			  <execution>
+				<id>textbutton-src</id>
+				<phase>install</phase>
+				<goals>
+				  <goal>copy-resources</goal>
+				</goals>
+				<configuration>
+				  <outputDirectory>../../../../../TourJS/src/main/resources/content/${textbutton.module}/src/main/flex</outputDirectory>
+				  <resources>          
+					<resource>
+					  <directory>src</directory>
+					  <filtering>true</filtering>
+					</resource>
+				  </resources>              
+				</configuration>            
+			  </execution>
+			  <execution>
+				<id>textbutton-js-release</id>
+				<phase>install</phase>
+				<goals>
+				  <goal>copy-resources</goal>
+				</goals>
+				<configuration>
+				  <outputDirectory>../../../../../TourJS/src/main/resources/content/${textbutton.module}/bin/js-release</outputDirectory>
+				  <resources>          
+					<resource>
+					  <directory>target/javascript/bin/js-release</directory>
+					  <filtering>true</filtering>
+					</resource>
+				  </resources>              
+				</configuration>            
+			  </execution>
+			</executions>
+		</plugin>
     </plugins>
 	</build>
   <dependencies>

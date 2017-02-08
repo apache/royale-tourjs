@@ -13,10 +13,18 @@
   <version>0.1.0-SNAPSHOT</version> 
   <packaging>pom</packaging> 
 
+  <properties>
+    <alert.module>visualComponents/generalComponents/alert/Alert</alert.module>
+	<simplealert.module>visualComponents/generalComponents/alert/SimpleAlert</simplealert.module>
+	<textbutton.module>visualComponents/generalComponents/button/TextButton</textbutton.module>
+	<imagebutton.module>visualComponents/generalComponents/button/ImageButton</imagebutton.module>
+  </properties>
+
   <modules>
-	<module>visualComponents/generalComponents/alert/Alert</module>
-	<module>visualComponents/generalComponents/alert/SimpleAlert</module>  
-    <module>visualComponents/generalComponents/button/TextButton</module>
+	<module>${alert.module}</module>
+	<module>${simplealert.module}</module>  
+    <module>${textbutton.module}</module>
+	<module>${imagebutton.module}</module>
   </modules> 
 
 </project> 

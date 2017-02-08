@@ -29,11 +29,11 @@
 	<relativePath>../../../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>TextButton</artifactId>
+  <artifactId>ImageButton</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>swf</packaging>
 
-  <name>Apache Flex - FlexJS: Examples: FlexJS: TextButton</name>
+  <name>Apache Flex - FlexJS: Examples: FlexJS: ImageButton</name>
 
   <build>
     <sourceDirectory>src/main/flex</sourceDirectory>
@@ -47,7 +47,7 @@
             <flashVersion>${version.flash}</flashVersion>
 		    <debug>${compiler.debug}</debug>
 			<outputJavaScript>true</outputJavaScript>
-			<mainClass>TextButton.mxml</mainClass>
+			<mainClass>ImageButton.mxml</mainClass>
           </configuration>
           <dependencies>
             <dependency>
@@ -89,12 +89,50 @@
         <configuration>
           <artifacts>
             <artifact>
-              <file>target/textbutton-0.1.0-SNAPSHOT.war</file>
+              <file>target/imagebutton-0.1.0-SNAPSHOT.war</file>
               <type>war</type>
             </artifact>
           </artifacts>
         </configuration>
       </plugin>
+	    <plugin>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>3.0.2</version>
+			<executions>
+			  <execution>
+				<id>imagebutton-src</id>
+				<phase>install</phase>
+				<goals>
+				  <goal>copy-resources</goal>
+				</goals>
+				<configuration>
+				  <outputDirectory>../../../../../TourJS/src/main/resources/content/${imagebutton.module}/src/main/flex</outputDirectory>
+				  <resources>          
+					<resource>
+					  <directory>src</directory>
+					  <filtering>true</filtering>
+					</resource>
+				  </resources>              
+				</configuration>            
+			  </execution>
+			  <execution>
+				<id>imagebutton-js-release</id>
+				<phase>install</phase>
+				<goals>
+				  <goal>copy-resources</goal>
+				</goals>
+				<configuration>
+				  <outputDirectory>../../../../../TourJS/src/main/resources/content/${imagebutton.module}/bin/js-release</outputDirectory>
+				  <resources>          
+					<resource>
+					  <directory>target/javascript/bin/js-release</directory>
+					  <filtering>true</filtering>
+					</resource>
+				  </resources>              
+				</configuration>            
+			  </execution>
+			</executions>
+		</plugin>
     </plugins>
 	</build>
   <dependencies>

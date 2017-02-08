@@ -106,7 +106,7 @@
         <version>3.0.2</version>
         <executions>
           <execution>
-            <id>copy-resources</id>
+            <id>copy-debug-resources</id>
             <!-- here the phase you need -->
             <phase>validate</phase>
             <goals>
@@ -114,6 +114,22 @@
             </goals>
             <configuration>
               <outputDirectory>${basedir}/target/javascript/bin/js-debug/resources</outputDirectory>
+              <resources>          
+                <resource>
+                  <directory>src/main/resources</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>              
+            </configuration>            
+          </execution>
+		  <execution>
+            <id>copy-release-resources</id>
+            <!-- here the phase you need -->
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
               <outputDirectory>${basedir}/target/javascript/bin/js-release/resources</outputDirectory>
               <resources>          
                 <resource>

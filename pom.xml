@@ -8,7 +8,7 @@
   <packaging>pom</packaging> 
   
   <properties>
-    <compiler.debug>true</compiler.debug>
+    <compiler.debug>false</compiler.debug>
     <compiler.output-dir>target/javascript/bin/js-debug</compiler.output-dir>
 	<version.flexjs>0.8.0-SNAPSHOT</version.flexjs>
 	<version.flash>20.0</version.flash>
