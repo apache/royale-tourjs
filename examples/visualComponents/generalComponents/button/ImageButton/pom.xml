@@ -37,6 +37,12 @@
 
   <build>
     <sourceDirectory>src/main/flex</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
 	<plugin>
 	  <groupId>org.apache.flex.flexjs.compiler</groupId>
@@ -77,7 +83,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-		<executions>
+       <executions>
           <execution>
             <id>attach-war</id>
             <phase>package</phase>
@@ -100,37 +106,71 @@
 			<version>3.0.2</version>
 			<executions>
 			  <execution>
-				<id>imagebutton-src</id>
-				<phase>install</phase>
-				<goals>
-				  <goal>copy-resources</goal>
-				</goals>
-				<configuration>
-				  <outputDirectory>../../../../../TourJS/src/main/resources/content/${imagebutton.module}/src/main/flex</outputDirectory>
-				  <resources>          
-					<resource>
-					  <directory>src</directory>
-					  <filtering>true</filtering>
-					</resource>
-				  </resources>              
-				</configuration>            
+          <id>imagebutton-src</id>
+          <phase>install</phase>
+          <goals>
+            <goal>copy-resources</goal>
+          </goals>
+          <configuration>
+            <outputDirectory>../../../../../TourJS/src/main/resources/content/${imagebutton.module}/src/main/flex</outputDirectory>
+            <resources>          
+            <resource>
+              <directory>src</directory>
+              <filtering>true</filtering>
+            </resource>
+            </resources>              
+          </configuration>            
 			  </execution>
 			  <execution>
-				<id>imagebutton-js-release</id>
-				<phase>install</phase>
-				<goals>
-				  <goal>copy-resources</goal>
-				</goals>
-				<configuration>
-				  <outputDirectory>../../../../../TourJS/src/main/resources/content/${imagebutton.module}/bin/js-release</outputDirectory>
-				  <resources>          
-					<resource>
-					  <directory>target/javascript/bin/js-release</directory>
-					  <filtering>true</filtering>
-					</resource>
-				  </resources>              
-				</configuration>            
-			  </execution>
+          <id>imagebutton-js-release</id>
+          <phase>install</phase>
+          <goals>
+            <goal>copy-resources</goal>
+          </goals>
+          <configuration>
+            <outputDirectory>../../../../../TourJS/src/main/resources/content/${imagebutton.module}/bin/js-release</outputDirectory>
+            <resources>          
+            <resource>
+              <directory>target/javascript/bin/js-release</directory>
+              <filtering>true</filtering>
+            </resource>
+            </resources>              
+          </configuration>            
+          </execution>
+          <execution>
+            <id>copy-debug-resources</id>
+            <!-- here the phase you need -->
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/javascript/bin/js-debug/resources</outputDirectory>
+              <resources>          
+                <resource>
+                  <directory>src/main/resources</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>              
+            </configuration>            
+          </execution>
+		      <execution>
+            <id>copy-release-resources</id>
+            <!-- here the phase you need -->
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/javascript/bin/js-release/resources</outputDirectory>
+              <resources>          
+                <resource>
+                  <directory>src/main/resources</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>              
+            </configuration>            
+          </execution>
 			</executions>
 		</plugin>
     </plugins>
