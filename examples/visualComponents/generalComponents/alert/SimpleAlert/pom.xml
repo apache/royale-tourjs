@@ -69,7 +69,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>
-                                ../../../../../TourJS/src/main/resources/content/${simplealert.module}/src/main/flex
+                                ../../../../../TourJS/src/main/resources/content/${simplealert.module}/src
                             </outputDirectory>
                             <resources>
                                 <resource>

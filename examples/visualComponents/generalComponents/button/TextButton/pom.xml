@@ -69,7 +69,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>
-                                ../../../../../TourJS/src/main/resources/content/${textbutton.module}/src/main/flex
+                                ../../../../../TourJS/src/main/resources/content/${textbutton.module}/src
                             </outputDirectory>
                             <resources>
                                 <resource>
