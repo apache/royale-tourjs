@@ -153,6 +153,9 @@ limitations under the License.
 				<js:VerticalFlexLayout/>
 			</js:beads>
 			<js:Panel id="topPanel" title="Example" width="100%" className="RunningExample">
+				<js:beads>
+					<js:VerticalFlexLayout />
+				</js:beads>
 				<js:SubAppLoader id="exampleApp" width="100%" height="100%" />
 			</js:Panel>
 			
@@ -160,9 +163,14 @@ limitations under the License.
 				<js:beads>
 					<js:VerticalFlexLayout/>
 				</js:beads>
-				<js:ButtonBar id="buttonBar" width="100%" change="changeExample()" />
-				<js:Container width="100%" className="ExampleCode">
+				<js:ButtonBar id="buttonBar" width="100%" height="50" change="changeExample()">
 					<js:beads>
+						<js:HorizontalFlexLayout/>
+					</js:beads>
+				</js:ButtonBar>
+				<js:Container width="100%" height="100%" className="ExampleCode">
+					<js:beads>
+						<js:BasicLayout />
 						<js:ScrollingViewport />
 					</js:beads>
 					<express:MXMLViewer id="codeArea" width="100%"/>
