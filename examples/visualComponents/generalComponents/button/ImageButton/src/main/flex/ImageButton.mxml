@@ -18,8 +18,7 @@ limitations under the License.
 
 -->
 <js:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
-                   xmlns:js="library://ns.apache.org/flexjs/basic"
-				   xmlns:local="*">
+				xmlns:js="library://ns.apache.org/flexjs/basic">
 	<fx:Script>
 		<![CDATA[
 			import org.apache.flex.html.SimpleAlert;
@@ -56,14 +55,16 @@ limitations under the License.
 			<js:Label text="Image Buttons Below" />
 			<js:Spacer height="50" />
 			
-			<js:HContainer>
+			<js:Group>
+				<js:beads>
+					<js:HorizontalFlexLayout />
+				</js:beads>
 				<js:ImageButton src="{URLUtils.getFullPath(mainView,'resources/start-button.png')}" click="startProcess()" />
 				<js:Spacer width="10" />
 				<js:Label text="{outputStatus}" width="150" />
 				<js:Spacer width="10" />
 				<js:ImageButton id="stopButton" src="{URLUtils.getFullPath(mainView,'resources/stop-button.png')}" click="stopProcess()" />
-			</js:HContainer>
-			
+			</js:Group>
 		</js:View>
     </js:initialView>
 </js:Application>

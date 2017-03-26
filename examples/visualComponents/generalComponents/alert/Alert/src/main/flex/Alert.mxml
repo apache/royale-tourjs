@@ -21,15 +21,16 @@ limitations under the License.
                    xmlns:js="library://ns.apache.org/flexjs/basic" >
     <fx:Script>
     	<![CDATA[
-    		import org.apache.flex.html.Alert;
-    		
-    		private function showAlert():void {
-    			Alert.show("This is a standard FlexJS alert. Do you wish to continue?", 
-    			           mainView, 
-    			           "Standard Alert", 
-    			           Alert.YES|Alert.NO);
-    		}
-    	]]>
+        import org.apache.flex.html.Alert;
+
+        private function showAlert():void
+        {
+            Alert.show("This is a standard FlexJS alert. Do you wish to continue?",
+                    mainView,
+                    "Standard Alert",
+                    Alert.YES | Alert.NO);
+        }
+        ]]>
     </fx:Script>
     <js:valuesImpl>
         <js:SimpleCSSValuesImpl />
