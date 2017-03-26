@@ -26,7 +26,7 @@ limitations under the License.
     </js:valuesImpl>
     <js:initialView>
         <js:View>
-            <local:TourJSMainView id="mainView"  />
+            <local:TourJSMainView id="mainView" width="100%" height="900"/>
         </js:View>
     </js:initialView>
     <!--<js:model>
