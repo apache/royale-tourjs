@@ -20,97 +20,99 @@ limitations under the License.
 <js:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
 		  	   xmlns:js="library://ns.apache.org/flexjs/basic"
 			   xmlns:express="org.apache.flex.express.*"
-			   width="100%"
 			   initComplete="loadInitialData()">
     <fx:Script>
         <![CDATA[
-			import org.apache.flex.collections.HierarchicalData;
-			import org.apache.flex.collections.converters.JSONItemConverter;
+		import org.apache.flex.collections.HierarchicalData;
+		import org.apache.flex.collections.converters.JSONItemConverter;
+		import org.apache.flex.events.Event;
 
-			[Bindable]
-			private var tempExampleNames = [];
-			
-			[Bindable]
-			private var contentData:HierarchicalData;
-			
-			private var currentExamples:Array;
-			private var currentExample:Object;
-			
-			private function loadInitialData():void {
-				service.url = "resources/content.json";
-				service.send();
-				service.addEventListener("complete", completeHandler);
-			}
-			
-			private function completeHandler(event:Event):void
+		[Bindable]
+		private var tempExampleNames = [];
+
+		[Bindable]
+		private var contentData:HierarchicalData;
+
+		private var currentExamples:Array;
+		private var currentExample:Object;
+
+		private function loadInitialData():void
+		{
+			service.url = "resources/content.json";
+			service.send();
+		}
+
+		private function onContentLoadingCompleteHandler(event:Event):void
+		{
+			var data:String = service.data as String;
+			var converter:JSONItemConverter = new JSONItemConverter();
+			var obj:Object = converter.convertItem(data);
+			contentData = new HierarchicalData(obj);
+			contentTree.dataProvider = contentData;
+		}
+
+		private function treeChange():void
+		{
+			var node:Object = contentTree.selectedItem;
+			if (node["type"] == "group")
 			{
-				var data:String = service.data as String;
-				var converter:JSONItemConverter = new JSONItemConverter();
-				var obj:Object = converter.convertItem(data);
-				contentData = new HierarchicalData(obj);
-				contentTree.dataProvider = contentData;
-			}
-			
-			private function treeChange():void
+				codeArea.text = "";
+			} else
 			{
-				var node:Object = contentTree.selectedItem;
-				if (node["type"] == "group") {
-					codeArea.text = "";
-				} else {
-					codeArea.text = "";					
-					var exampleNames:Array = [];
-					
-					currentExamples = node["example"];
-					for (var i:int=0; i < currentExamples.length; i++) {
-						var item:Object = currentExamples[i];
-						exampleNames.push(item["name"]);
-					}
-					
-					// show the first (or only) one.
-					if (currentExamples.length > 0) {
-						showExampleSource(0);
-					}
-					
-					buttonBar.dataProvider = exampleNames;
+				codeArea.text = "";
+				var exampleNames:Array = [];
+
+				currentExamples = node["example"];
+				for (var i:int = 0; i < currentExamples.length; i++)
+				{
+					var item:Object = currentExamples[i];
+					exampleNames.push(item["name"]);
 				}
+
+				// show the first (or only) one.
+				if (currentExamples.length > 0)
+				{
+					showExampleSource(0);
+				}
+
+				buttonBar.dataProvider = exampleNames;
 			}
-			
-			private function codeLoaded(event:Event):void
-			{
-				var data:String = codeLoader.data as String;
-				codeArea.text = data;
-			}
-			
-			private function codeError(event:Event):void
-			{
-				codeArea.text = "Error loading this code example";
-			}
-			
-			private function showExampleSource(index:int):void
-			{
-				currentExample = currentExamples[index];
-				
-				codeLoader.url = "resources/" + currentExample["source"];
-				codeLoader.send();
-				codeLoader.addEventListener("complete", codeLoaded);
-				codeLoader.addEventListener("ioError", codeError);
-				
-				runExample();
-			}
-			
-			private function changeExample():void
-			{
-				showExampleSource(buttonBar.selectedIndex);
-			}
-						
-			private function runExample():void
-			{
-				var item:Object = currentExample;
-				var swfURL:String = "resources/" + item["module_swf"];
-				var htmlURL:String = "resources/" + item["module_js"];
-				
-				exampleApp.loadApplication(swfURL, htmlURL);
-			}
+		}
+
+		private function onCodeLoadingCompleteHandler(event:Event):void
+		{
+			var data:String = codeLoader.data as String;
+			codeArea.text = data;
+		}
+
+		private function onCodeLoadingIoError(event:Event):void
+		{
+			codeArea.text = "Error loading this code example";
+		}
+
+		private function showExampleSource(index:int):void
+		{
+			currentExample = currentExamples[index];
+
+			codeLoader.url = "resources/" + currentExample["source"];
+			codeLoader.send();
+
+			runExample();
+		}
+
+		private function changeExample():void
+		{
+			showExampleSource(buttonBar.selectedIndex);
+		}
+
+		private function runExample():void
+		{
+			var item:Object = currentExample;
+			var swfURL:String = "resources/" + item["module_swf"];
+			var htmlURL:String = "resources/" + item["module_js"];
+
+			exampleApp.loadApplication(swfURL, htmlURL);
+		}
 		]]>
     </fx:Script>
 	
@@ -125,6 +127,7 @@ limitations under the License.
 		.RunningExample {
 			margin-bottom: 5px;
 			background-color: #FEFEFE;
+			min-height: 150px;
 		}
 		.ExampleCode {
 			background-color: #FEFEFE;
@@ -134,8 +137,8 @@ limitations under the License.
 	
 	<js:beads>
 		<js:HorizontalFlexLayout />
-		<js:HTTPService id="service" />
-		<js:HTTPService id="codeLoader" />
+		<js:HTTPService id="service" complete="onContentLoadingCompleteHandler(event)"/>
+		<js:HTTPService id="codeLoader" complete="onCodeLoadingCompleteHandler(event)" ioError="onCodeLoadingIoError(event)"/>
 	</js:beads>
 	
 		<js:Panel title="Component Explorer" width="25%" className="Explorer">
@@ -150,27 +153,27 @@ limitations under the License.
 		
 		<js:Group width="74%">
 			<js:beads>
-				<js:VerticalFlexLayout/>
+				<js:VerticalFlexLayout />
 			</js:beads>
 			<js:Panel id="topPanel" title="Example" width="100%" className="RunningExample">
 				<js:beads>
-					<js:VerticalFlexLayout />
+					<js:VerticalFlexLayout grow="1"/>
 				</js:beads>
-				<js:SubAppLoader id="exampleApp" width="100%" height="100%" />
+				<js:SubAppLoader id="exampleApp" width="100%" />
 			</js:Panel>
 			
 			<js:Group width="100%">
 				<js:beads>
-					<js:VerticalFlexLayout/>
+					<js:VerticalFlexLayout grow="1" />
 				</js:beads>
-				<js:ButtonBar id="buttonBar" width="100%" height="50" change="changeExample()">
+				<js:ButtonBar id="buttonBar" width="100%" change="changeExample()">
 					<js:beads>
-						<js:HorizontalFlexLayout/>
+						<js:HorizontalFlexLayout grow="1"/>
 					</js:beads>
 				</js:ButtonBar>
-				<js:Container width="100%" height="100%" className="ExampleCode">
+				<js:Container width="100%" className="ExampleCode">
 					<js:beads>
-						<js:BasicLayout />
+						<js:VerticalFlexLayout grow="1"/>
 						<js:ScrollingViewport />
 					</js:beads>
 					<express:MXMLViewer id="codeArea" width="100%"/>
