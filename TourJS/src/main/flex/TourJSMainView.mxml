@@ -139,6 +139,9 @@ limitations under the License.
 	</js:beads>
 	
 		<js:Panel title="Component Explorer" width="25%" className="Explorer">
+			<js:beads>
+				<js:VerticalFlexLayout />
+			</js:beads>
 			<js:Tree id="contentTree" width="100%"
 						labelField="title"
 						className="ExplorerTree"
