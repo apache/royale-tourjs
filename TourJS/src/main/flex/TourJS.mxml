@@ -25,7 +25,9 @@ limitations under the License.
         <js:SimpleCSSValuesImpl />
     </js:valuesImpl>
     <js:initialView>
-        <local:TourJSMainView id="mainView"  />
+        <js:View>
+            <local:TourJSMainView id="mainView"  />
+        </js:View>
     </js:initialView>
     <!--<js:model>
         <models:ASDocModel />
